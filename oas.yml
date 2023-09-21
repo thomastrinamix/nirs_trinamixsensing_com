@@ -1,0 +1,454 @@
+openapi: 3.0.0
+info:
+  title: ATLAS Service Template - feedstuff_sample
+  version: '0.0.1'
+servers:
+  - url: https://nirs.trinamixsensing.com/api
+security:
+  - bearerAuth: []
+paths:
+  /measurements:
+    post:
+      summary: Send a query to request measurement results
+      parameters: 
+        - name: after
+          in: query
+          schema:
+            type: string
+            format: date-time
+          example: '2018-11-21T23:07:33.053Z'
+        - name: before
+          in: query
+          schema:
+            type: string
+            format: date-time
+          example: '2020-07-13T20:05:19.254Z'
+        - name: PageNumber
+          in: query
+          schema:
+            type: integer
+          example: '0'
+        - name: PageSize
+          in: query
+          schema:
+            type: integer
+          example: '100'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalCount:
+                    type: integer 
+                    example: 99
+                  pageNumber: 
+                    type: integer
+                    example: 0
+                  pageSize: 
+                    type: integer
+                    example: 100
+                  data:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        nirsMeasurement:
+                          type: object
+                          properties:
+                            timestamp: 
+                              type: string
+                              format: date-time
+                              example: '2018-11-21T23:07:33.053Z'
+                            id: 
+                              type: integer
+                              example: 66262711
+                        nirsScoring:
+                          type: object 
+                          properties:
+                            timestamp: 
+                              type: string
+                              format: date-time
+                              example: '2018-11-21T23:07:33.053Z'
+                            id: 
+                              type: integer
+                              example: 66262711
+                            measurementId: 
+                              type: integer
+                              example: 66262711
+                            scoringResultList:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id: 
+                                    type: integer
+                                    example: 62408628
+                                  name: 
+                                    type: string
+                                    example: sit magna
+                                  type: 
+                                    type: string
+                                    example: dolore ex sunt Excepteur ut
+                                  value: 
+                                    type: string
+                                    example: ullamco eiusmod
+                                  unit: 
+                                    type: string
+                                    example: pariatur exercitat
+                                  scoringId: 
+                                    type: integer
+                                    example: 62408628
+                        nirsSample:
+                          type: object
+                          properties:
+                            identifier: 
+                              type: string
+                              example: enim Excepteur
+                            description: 
+                              type: string
+                              example: pariatur proident fugiat
+                            createdAt: 
+                              type: string
+                              format: date-time
+                              example: '2018-11-21T23:07:33.053Z'
+                            id: 
+                              type: integer
+                              example: 66262711
+                            metadataList:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id: 
+                                    type: integer
+                                    example: 62408628
+                                  name: 
+                                    type: string
+                                    example: sit magna
+                                  type: 
+                                    type: string
+                                    example: dolore ex sunt Excepteur ut
+                                  value: 
+                                    type: string
+                                    example: ullamco eiusmod
+                                  unit: 
+                                    type: string
+                                    example: pariatur exercitat
+                                  referenceId: 
+                                    type: integer
+                                    example: 62408628
+                                  source:
+                                    type: string
+                                    example: tempor id cillum culpa
+                        nirsMetadataList:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id: 
+                                type: integer
+                                example: 62408628
+                              name: 
+                                type: string
+                                example: sit magna
+                              type: 
+                                type: string
+                                example: dolore ex sunt Excepteur ut
+                              value: 
+                                type: string
+                                example: ullamco eiusmod
+                              unit: 
+                                type: string
+                                example: pariatur exercitat
+                              referenceId: 
+                                type: integer
+                                example: 62408628
+                              source:
+                                type: string
+                                example: tempor id cillum culpa
+                  warnings:
+                    type: array
+                    items: 
+                      type: string
+                    example:
+                      - aute magna voluptate
+                      - ad qui
+        '400':
+          description: Bad Request
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                type: eiusmod dolor e
+                title: do reprehenderit incididunt
+                status: -43496900
+                detail: esse cupidatat
+                instance: eu proident pariatur dolore sed
+        '401':
+          description: Unauthorized
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                type: eiusmod dolor e
+                title: do reprehenderit incididunt
+                status: -43496900
+                detail: esse cupidatat
+                instance: eu proident pariatur dolore sed
+        '403':
+          description: Forbidden
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: ''
+
+  /subscriptions:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Subscriptions
+      summary: Registers a notification URL
+      description: Registers a notification URL that will be invoked whenever changes occurs in animals (subscribe).
+      operationId: subscribe
+      requestBody:
+        description: subscription parameters
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                notification_url:
+                  type: string
+                  format: uri
+                  description: A subscription's notification_url is invoked with a POST (WITHOUT Authorization headers), containing a Notification request body (see schema below)
+                notification_authorization:
+                  type: string
+                  description: authorization string which will be included in every notification POST
+              required:
+                - notification_url
+              example:
+                notification_url: "https://acme.com/my_notification_handler"
+      responses:
+        '201':
+          description: subscription created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: the service-generated id for the new subscription
+                  expiration_date:
+                    type: string
+                    format: date-time
+                    description: date at which the subscription expires (auto-delete)
+              example:
+                id: 550ef2f0-02b6-40b2-bed9-e20816d20255
+                expiration_date: '2021-05-23T18:25:43+00'
+        '400':
+          description: Invalid or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '401':
+          description: Invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+              example:
+                message: A subscription already exists for this notification_url
+                errors:
+                  - 550ef2f0-02b6-40b2-bed9-e20816d20255
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+  /subscriptions/{id}:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - Subscriptions
+      summary: Refreshes an existing subscription
+      description: Refreshes an existing subscription (refresh_subscription)
+      operationId: refresh_subscription
+      parameters:
+        - description: the id of a subscription
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  expiration_date:
+                    type: string
+                    format: date-time
+                    description: ISO 8601 UTC date/time at which the subscription expires (auto-delete)
+              example:
+                id: 550ef2f0-02b6-40b2-bed9-e20816d20255
+                expiration_date: '2021-06-23T18:25:43+00'
+        '400':
+          description: Invalid or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '401':
+          description: Invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '404':
+          description: The subscription was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '410':
+          description: The subscription is expired
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - Subscriptions
+      summary: Cancels a subscription
+      description: Cancels a previously created subscription (unsubscribe)
+      operationId: unsubscribe
+      parameters:
+        - description: the id of a subscription
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        '204':
+          description: successful operation
+        '401':
+          description: Invalid or missing credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '404':
+          description: The subscription was not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedError'
+
+
+components:
+  schemas:
+    URN:
+      type: string
+      pattern: "^urn:[a-z][a-z0-9_.\\-]*:[\\w-.]+"
+      description: 'Uniform resource name of an object with the syntax `urn:<service_id>:<internal_id>`. <service_id> must be the urn of a valid and active ATLAS service.'
+      example: 'urn:animal_data:69d4a4ec-e8a4-4768-a299-14a7a9acd1b1'
+    Notification:
+      description: Payload sent when invoking notification_url
+      type: object
+      properties:
+        subscription_id:
+          type: string
+          description: the id of a subscription
+        date:
+          type: string
+          format: date-time
+          description: ISO 8601 UTC date/time at which the notification was originally triggered (regardless of retries)
+        urns:
+          type: array
+          description: collect all URNs of new samples at this time
+          items: 
+            $ref: '#/components/schemas/URN'
+    DetailedError:
+      type: object
+      description: This defines the structure of an error payload when one is present. Actual messages and additional error information content may change from one implementation to another
+      properties:
+        message:
+          type: string
+          description: error description
+        status:
+            type: string
+            description: http error code
+        error_url:
+          type: string
+          format: uri
+          description: "A service's proprietary UI url where the user may navigate to view additional information or be prompted for additional actions to deal with the error. A well-behaved FMIS will present his users with a visual indication and the means to click on this link when this attribute is present."
+        errors:
+          type: array
+          items:
+            type: string
+          description: Additional detailed information
+      required:
+        - message
+      example:
+        message: this is a sample error message
+        errors:
+          - this is an example of additional error information
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
