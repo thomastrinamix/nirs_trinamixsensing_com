@@ -1,0 +1,119 @@
+<html>
+<head>
+    <style type="text/css">
+        body { font-family: courier, courier new, monospace; font-size:12px; margin-left: 42px; width: 465px; white-space: pre-line; }
+        h2 { margin: 10px 0 0 -22px; font-size:12px; padding: 0 !important }
+        table { font-size: 10px; margin-left: -22px; width: 480px; }
+        div.header { padding: 0; margin: 0 0 0 -22px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+ATLAS Service Template Specification
+Name                        nirs_trinamixsensing_com
+Version                     0.0.1
+Author(s)                   Felix Hild,
+                            Thomas Rosenkranz
+</div>
+
+<h2>The nirs_trinamixsensing_com ATLAS Service Template</h2>
+<div style="margin-left: -22px;">
+Abstract
+
+This document describes the specifications for the nirs_trinamixsensing_com service whose purpose is to make available mobile NIR feed analytics from trinamiX to authorized ATLAS network consumers.
+</div>
+<h2>1 Introduction</h2>
+
+Mobile NIR feed analytics is key to a great number of services and platforms in the ATLAS network. Services implementing the nirs_trinamixsensing_com service template will benefit from the information collected by mobile NIR feed analytics.
+
+The nirs_trinamixsensing_com service template is designed with the idea to provide NIR feed analytics. 
+
+<h2>2 Terminology</h2>
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 and indicate requirement levels for compliant implementations.
+
+When used alone, the term "nirs_trinamixsensing_com" refers to "nirs_trinamixsensing_com ATLAS Service Template". Instead, "nirs_trinamixsensing_com service" is equivalent to "an ATLAS Service implementing the nirs_trinamixsensing_com ATLAS Service Template".
+
+<h2>3 nirs_trinamixsensing_com Usage Scenarios</h2>
+
+The following sections describe some aspects of the use of nirs_trinamixsensing_com. The examples were chosen to illustrate the basic operation of applications using nirs_trinamixsensing_com, not to limit what nirs_trinamixsensing_com may be used for.
+
+<h2>3.1 Ration calculation</h2>
+
+The preparation of animal feed from different raw materials (ration formulation) can be based on results of mobile NIRS analysis. The results of a sample analysis can be transferred using nirs_trinamixsensing_com into a ration formulation software to formulate the ration based on the nutritional values of the actual materials.
+
+<h2>3.2 Quality control</h2>
+
+NIRS analysis results performed as inbound or outbound control on a producing or processing site can be transferred to a quality control software using nirs_trinamixsensing_com for monitoring and further data processing.
+
+<h2>4 Service Template Structure</h2>
+
+The Service Template includes a single POST endpoint to request NIRS measurement data.
+
+The return of the requested data is paginated to allow data transfer in chunks by iterating over the pages. The response body includes the total count of data blocks, the page number and page size.
+
+<pre>
++--------------------------------------------+
+| measurements                               |
++-------------+------------------------------+
+|  totalCount |                              |
++-------------+------------------------------+
+|  pageNumber |                              |
++-------------+------------------------------+
+|    pageSize |                              |
++-------------+------------------------------+
+|     data    | nirsMeasurement              |
+|             | nirsScoring                  |
+|             | nirsSample                   |
+|             | nirsMetadataList             |
++-------------+------------------------------+
+</pre>
+
+The data field contains a list of the requested measurements on the current page. 
+It contains elements
+- nirsMeasurement: referring to the measurement of the sample with a NIR spectrometer
+- nirsScoring: referring to the results of the chemometric analysis of the NIR spectra
+- nirsSample: referring to the physical sample that was measured
+- nirsMetadataList: referring to additional information about the measurement
+
+<h2>4.1 Request parameters and body</h2>
+
+The request parameter PageSize (allowed values 1-1000) determines the number of measurements returned. By iterating over PageNumber (zero-indexed) the whole data set can be iteratively retrieved.
+
+The request body allows to narrow down the requested data based on the measurement date with according timestamp limits ("before" and "after") for the desired interval.
+
+<h2>4.1 Generic data format</h2>
+
+Dynamic contents where no precondition on the format applies are returned in the form of unsorted lists of generic data items with the fields
+- id: database id for this element
+- [referenceId]: database id for the element this item is referring to
+- name: property the element describes
+- type: data type of the value (string, integer, float, boolean)
+- value: value of the property castable as the indicated type
+- unit: for physical measurands the unit of the property
+
+<h2>4.2 Scoring results</h2>
+
+The results of the chemometric analysis of NIR spectra are returned in nirsScoring.scoringResultsList. This list contains all the parameters derived from the NIR spectra either in the form of predicted values or of calculated values based on one or more predicted values.
+
+<h2>4.2 Metadata</h2>
+
+To enable a complementation of the transferred data with contextual information about the measurement (such as user notes taken with the measurement) nirsMetadataList contains a list of variable size of generic data elements (see 5.1). Accordingly, nirsSample features a metadataList for additional properties of the samples.
+
+
+<h2>4.3 Queries with no data available</h2>
+
+If no data in the database matches the selected time interval, the data field of the response will be an empty list.
+
+<h2>5 Access and Authentication</h2>
+
+Users MUST have an account setup on a nirs.trinamixsensing.com with organization license rights in order to authenticate and access API endpoints. The service implementor is responsible for the creation of accounts; it is not covered in the service template specifications.
+
+Unless specifically documented in the OpenAPI specifications, all API calls must include credentials in form of Bearer authentication (also called token authentication). Clients can obtain an access token on behalf of their user from the service's authorization server (see ATLAS service pairing).
+
+Some information held by nirs_trinamixsensing_com services may be considered sensitive from a GDPR perspective. The service's authorization server SHOULD request the client's end-user consent at service pairing time in order to deliver an access token.
+
+
+</body>
+</html>
