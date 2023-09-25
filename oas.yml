@@ -2,14 +2,12 @@ openapi: 3.0.0
 info:
   title: ATLAS Service Template - feedstuff_sample
   version: '0.0.1'
-servers:
-  - url: https://nirs.trinamixsensing.com/api
 security:
   - bearerAuth: []
 paths:
   /measurements:
     post:
-      summary: Send a query to request measurement results
+      summary: Query measurement results
       parameters: 
         - name: after
           in: query
@@ -62,6 +60,7 @@ paths:
                       properties:
                         nirsMeasurement:
                           type: object
+                          description: a measurement is the process of analysing a sample
                           properties:
                             timestamp: 
                               type: string
@@ -72,6 +71,7 @@ paths:
                               example: 66262711
                         nirsScoring:
                           type: object 
+                          description: the scoring includes interpreted data from the sample
                           properties:
                             timestamp: 
                               type: string
@@ -85,6 +85,7 @@ paths:
                               example: 66262711
                             scoringResultList:
                               type: array
+                              description: the result list includes the measured and interpreted results like humidity and nutrients
                               items:
                                 type: object
                                 properties:
@@ -108,6 +109,7 @@ paths:
                                     example: 62408628
                         nirsSample:
                           type: object
+                          description: describes the physical sample
                           properties:
                             identifier: 
                               type: string
@@ -124,6 +126,7 @@ paths:
                               example: 66262711
                             metadataList:
                               type: array
+                              description: includes data like sample-type
                               items:
                                 type: object
                                 properties:
