@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
-  title: nirs.trinamixsensing.com
-  version: 10
+  title: ATLAS Service Template - feedstuff_sample
+  version: '0.0.1'
 servers:
-  - url: https://nirs.trinamixsensing.com/api
+  - url: https://nirs.trinamixsensing.com/api/organization/dataScience
 components:
   securitySchemes:
     bearerAuth:
@@ -13,18 +13,27 @@ components:
 security:
   - bearerAuth: []
 paths:
-  /organization/dataScience/measurements:
+  /measurements:
     post:
-      summary: Send a query to request measurement results
+      summary: Query measurement results
       requestBody:
         content:
           application/json:
             schema:
               type: object
               example:
-                after: '2018-11-21T23:07:33.053Z'
-                before: '1993-07-13T20:05:19.254Z'
-      parameters:
+                after: '1993-07-13T20:05:19.254Z'
+                before: '2018-11-21T23:07:33.053Z'
+      parameters: 
+        - name: api-version
+          in: header
+          description: The requested API version
+          required: true
+          schema:
+            type: string
+            enum:
+              - '10.0'
+            readOnly: true
         - name: PageNumber
           in: query
           schema:
@@ -47,69 +56,148 @@ paths:
             application/json:
               schema:
                 type: object
-              example:
-                totalCount: 99
-                pageNumber: 0
-                pageSize: 100
-                data:
-                  - nirsMeasurement:
-                      timestamp: '1947-04-12T06:24:47.827Z'
-                      id: 66262711
-                    nirsScoring:
-                      timestamp: '2003-04-21T22:44:36.834Z'
-                      scoringResultList:
-                        - id: 61149861
-                          scoringId: 62408628
-                          name: sit magna
-                          type: dolore ex sunt Excepteur ut
-                          value: ullamco eiusmod
-                          unit: pariatur exercitat
-                        - id: 82396962
-                          scoringId: 62408628
-                          name: tempor ut sed
-                          type: est occaecat sunt nostrud
-                          value: anim Excepteur
-                          unit: exercitation ullamco
-                      id: 62408628
-                      measurementId: 66262711
-                    nirsSample:
-                      identifier: enim Excepteur
-                      description: pariatur proident fugiat
-                      metadataList:
-                        - name: proident voluptate tempor dolor
-                          type: proident
-                          value: cupidatat in sed
-                          id: 23332175
-                          referenceId: 20617888
-                          source: aliqua sed exercitation aute cillum
-                          unit: tempor id cillum culpa
-                        - name: in amet consequat cillu
-                          type: exercitation minim
-                          value: magna reprehenderit
-                          id: 58655339
-                          referenceId: 20617888
-                          source: ea nulla
-                          unit: Ut sit magna
-                      createdAt: '2003-11-18T08:57:53.467Z'
-                      id: 20617888
-                    nirsMetadataList:
-                      - id: 55548427
-                        referenceId: 66262711
-                        type: aliqua laboris ut enim et
-                        source: ipsum sint
-                        name: ut esse reprehenderit
-                        value: ad aute Ut mollit
-                        unit: veniam mollit ut enim
-                      - id: 99136007
-                        referenceId: 66262711
-                        type: labore sint
-                        source: officia velit ut ex
-                        name: laboris do
-                        value: sed dolore fugiat dolore amet
-                        unit: in ipsum ea
-                warnings:
-                  - aute magna voluptate
-                  - ad qui
+                properties:
+                  totalCount:
+                    type: integer 
+                    example: 99
+                  pageNumber: 
+                    type: integer
+                    example: 0
+                  pageSize: 
+                    type: integer
+                    example: 100
+                  data:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        nirsMeasurement:
+                          type: object
+                          description: a measurement is the process of applying an experimental method to produce physical data of a sample
+                          properties:
+                            timestamp: 
+                              type: string
+                              format: date-time
+                              example: '2018-11-21T23:07:33.053Z'
+                            id: 
+                              type: integer
+                              example: 100
+                        nirsScoring:
+                          type: object 
+                          description: the scoring is the analysis and interpretation of physical data to derive physico-chemical properties of the sample
+                          properties:
+                            timestamp: 
+                              type: string
+                              format: date-time
+                              example: '2018-11-21T23:07:33.053Z'
+                            id: 
+                              type: integer
+                              example: 200
+                            measurementId: 
+                              type: integer
+                              example: 100
+                            scoringResultList:
+                              type: array
+                              description: the result list includes physico-chemical properties (e.g. moisture or nutrients) and other analysis results
+                              items:
+                                type: object
+                                properties:
+                                  id: 
+                                    type: integer
+                                    example: 300
+                                  name: 
+                                    type: string
+                                    example: Moisture
+                                  type: 
+                                    type: string
+                                    example: float
+                                  value: 
+                                    type: number
+                                    example: 42.0
+                                  unit: 
+                                    type: string
+                                    example: '%'
+                                  scoringId: 
+                                    type: integer
+                                    example: 200
+                        nirsSample:
+                          type: object
+                          description: describes the physical sample
+                          properties:
+                            identifier: 
+                              type: string
+                              example: Sample A
+                            description: 
+                              type: string
+                              example: Yellow powder
+                            createdAt: 
+                              type: string
+                              format: date-time
+                              example: '2018-11-21T23:07:33.053Z'
+                            id: 
+                              type: integer
+                              example: 400
+                            metadataList:
+                              type: array
+                              description: includes data like sample-type
+                              items:
+                                type: object
+                                properties:
+                                  id: 
+                                    type: integer
+                                    example: 500
+                                  name: 
+                                    type: string
+                                    example: Sample type
+                                  type: 
+                                    type: string
+                                    example: string
+                                  value: 
+                                    type: string
+                                    example: Corn
+                                  unit: 
+                                    type: string
+                                    example: 
+                                  referenceId: 
+                                    type: integer
+                                    example: 400
+                                  source:
+                                    type: string
+                                    example: User input
+                        nirsMetadataList:
+                          type: array
+                          description: includes additional information about the measurement
+                          items:
+                            type: object
+                            properties:
+                              id: 
+                                type: integer
+                                example: 600
+                              name: 
+                                type: string
+                                example: Comment
+                              type: 
+                                type: string
+                                example: string
+                              value: 
+                                type: string
+                                example: Sample moved during measurement
+                              unit: 
+                                type: string
+                                example: 
+                              referenceId: 
+                                type: integer
+                                example: 100
+                              source:
+                                type: string
+                                example: User input
+                  warnings:
+                    type: array
+                    items: 
+                      type: string
+                    example:
+                      - aute magna voluptate
+                      - ad qui
         '400':
           description: Bad Request
           headers:
